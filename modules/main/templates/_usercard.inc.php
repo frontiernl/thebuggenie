@@ -50,14 +50,19 @@
 			<?php endif; ?>	
 			<br>	
 			<?php if (count($issues)): ?>	
-				<?php echo __('This user has reported %issues% issue(s)', array('%issues%' => '<b>'.count($user->getIssues()).'</b>')); ?>
+				<?php echo __('This user has reported %issues% issue(s)', array('%issues%' => '<b>'.count($issues).'</b>')); ?>
+				<?php $seen = 0; ?>
 				<h4><?php echo __('Last reported issues:') . ' '; ?></h4>
 					<ul class="simple_list">
 					<?php foreach ($issues as $issue): ?>
+						<?php $project = $issue->getProject(); ?>
+						<?php if ($project->hasAccess()): ?>
 						<li>
-							<span class="faded_out smaller">[<?php echo link_tag(make_url('project_dashboard', array('project_key' => $issue->getProject()->getKey())), $issue->getProject()->getKey()); ?>]</span>
-							<?php echo link_tag(make_url('viewissue', array('project_key' => $issue->getProject()->getKey(), 'issue_no' => $issue->getFormattedIssueNo())), tbg_truncateText($issue->getFormattedTitle(true), 100)); ?>
+							<span class="faded_out smaller">[<?php echo link_tag(make_url('project_dashboard', array('project_key' => $project->getKey())), $project->getKey()); ?>]</span>
+							<?php echo link_tag(make_url('viewissue', array('project_key' => $project->getKey(), 'issue_no' => $issue->getFormattedIssueNo())), tbg_truncateText($issue->getFormattedTitle(true), 100)); ?>
 						</li>
+						<?php if (++$seen == 7) break; ?>
+						<?php endif; ?>
 					<?php endforeach; ?>
 					</ul>
 			<?php else: ?>
